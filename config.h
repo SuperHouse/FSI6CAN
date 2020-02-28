@@ -2,7 +2,7 @@
 #define CAN_DEBUG false
 #define OUTPUT_DEBUG false
 
-#define THROTTLE_INCREMENT 10
+#define THROTTLE_INCREMENT 30
 //#define THROTTLE_STALL_POINT 135   // Values above this, the motor won't turn properly
 
 // Don't output more than this using PWM. Scale to make this 100% output
