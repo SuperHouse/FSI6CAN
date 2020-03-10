@@ -55,18 +55,18 @@ const uint8_t g_output_ailerons = X1_OUTPUT_PIN;  // Ailerons
 const uint8_t g_output_throttle = Y1_OUTPUT_PIN;  // Throttle
 #endif
 
-uint8_t  g_xAxis1Output      =   0;
-uint8_t  g_yAxis1Output      =   0;
-uint8_t  g_xAxis2Output      =   0;
-uint8_t  g_yAxis2Output      = MAX_OUTPUT_VALUE;  // Maximum output is stick full down (throttle off)
-uint8_t  g_throttle_position = 255;               // Maximum output is stick full down (throttle off)
-char     g_incoming_message_buffer[12];           // Buffer for incoming CAN messages
+uint8_t g_x1_value          = MIN_OUTPUT_VALUE;
+uint8_t g_y1_value          = MIN_OUTPUT_VALUE;
+uint8_t g_x2_value          = MIN_OUTPUT_VALUE;
+uint8_t g_y2_value          = MAX_OUTPUT_VALUE;   // Maximum output is stick full down (throttle off)
+uint8_t g_throttle_position = MAX_OUTPUT_VALUE;   // Maximum output is stick full down (throttle off)
+char    g_incoming_message_buffer[12];            // Buffer for incoming CAN messages
 
 // Serial
 uint32_t g_last_serial_report_time = 0;           // Timestamp of last report to serial console
 
 /*--------------------------- Function Signatures ---------------------------*/
-void onReceive(int16_t packetSize);
+void onReceive(int16_t packet_size);
 
 /*--------------------------- Instantiate Global Objects --------------------*/
 // None
@@ -109,12 +109,12 @@ void setup() {
   Loop
 */
 void loop() {
-  g_yAxis2Output = g_throttle_position;
+  g_y2_value = g_throttle_position;
 
-  analogWrite(g_output_rudder,   g_xAxis1Output);
-  analogWrite(g_output_elevator, g_yAxis1Output);
-  analogWrite(g_output_ailerons, g_xAxis2Output);
-  analogWrite(g_output_throttle, g_yAxis2Output);
+  analogWrite(g_output_rudder,   g_x1_value);
+  analogWrite(g_output_elevator, g_y1_value);
+  analogWrite(g_output_ailerons, g_x2_value);
+  analogWrite(g_output_throttle, g_y2_value);
 
   if (OUTPUT_DEBUG)
   {
@@ -124,16 +124,16 @@ void loop() {
       //Serial.print(xAxis1ReportValue);
       //Serial.print(" | ");
       Serial.print("X1:");
-      Serial.print(g_xAxis1Output);
+      Serial.print(g_x1_value);
 
       Serial.print(" |Y1:");
-      Serial.print(g_yAxis1Output);
+      Serial.print(g_y1_value);
 
       Serial.print(" |X2:");
-      Serial.print(g_xAxis2Output);
+      Serial.print(g_x2_value);
 
       Serial.print(" |Y2:");
-      Serial.print(g_yAxis2Output);
+      Serial.print(g_y2_value);
 
       Serial.println(" |");
       g_last_serial_report_time = current_time;
@@ -144,11 +144,12 @@ void loop() {
 /**
   Callback when a CAN packet arrives
 */
-void onReceive(int16_t packetSize) {
-  // received a packet
+void onReceive(int16_t packet_size) {
+  // Received a packet. We're not using packet_size at the moment. Just work
+  // through all incoming bytes.
 
-  int integerValue = 0;    // throw away previous integerValue
-  char incomingByte;
+  int integer_value = 0;    // throw away previous integer_value
+  char incoming_byte;
   byte is_negative = 0;
   uint8_t i = 0;
   if (CAN_DEBUG)
@@ -158,20 +159,20 @@ void onReceive(int16_t packetSize) {
     Serial.print(" Value: ");
   }
   while (CAN.available()) {
-    incomingByte = (char)CAN.read();
+    incoming_byte = (char)CAN.read();
     if (CAN_DEBUG)
     {
-      Serial.print(incomingByte - 48);
+      Serial.print(incoming_byte - 48);
     }
-    g_incoming_message_buffer[i] = incomingByte;
+    g_incoming_message_buffer[i] = incoming_byte;
     i++;
-    if (incomingByte == '-')
+    if (incoming_byte == '-')
     {
       is_negative = true;
     } else {
-      integerValue *= 10;  // shift left 1 decimal place
+      integer_value *= 10;  // shift left 1 decimal place
       // convert ASCII to integer, add, and shift left 1 decimal place
-      integerValue = ((incomingByte - 48) + integerValue);
+      integer_value = ((incoming_byte - 48) + integer_value);
     }
   }
   if (CAN_DEBUG)
@@ -182,7 +183,7 @@ void onReceive(int16_t packetSize) {
 
   if (is_negative)
   {
-    integerValue = integerValue * -1;
+    integer_value = integer_value * -1;
   }
 
   int axis_output = 0;
@@ -192,15 +193,15 @@ void onReceive(int16_t packetSize) {
     if (CAN_DEBUG)
     {
       Serial.print("X=");
-      Serial.print(integerValue, DEC);
+      Serial.print(integer_value, DEC);
     }
     if (INVERT_X1)
     {
-      axis_output = map(integerValue, +75, -75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
+      axis_output = map(integer_value, +75, -75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
     } else {
-      axis_output = map(integerValue, -75, +75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
+      axis_output = map(integer_value, -75, +75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
     }
-    g_xAxis1Output = constrain(axis_output, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
+    g_x1_value = constrain(axis_output, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
   }
 
   if (CAN.packetId() == 0x13) // Packet ID 0x13 for Y axis
@@ -208,16 +209,16 @@ void onReceive(int16_t packetSize) {
     if (CAN_DEBUG)
     {
       Serial.print("     Y=");
-      Serial.println(integerValue, DEC);
+      Serial.println(integer_value, DEC);
     }
-    //g_yAxis1Output = integerValue;
+    //g_y1_value = integer_value;
     if (INVERT_Y1)
     {
-      axis_output = map(integerValue, +75, -75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
+      axis_output = map(integer_value, +75, -75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
     } else {
-      axis_output = map(integerValue, -75, +75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
+      axis_output = map(integer_value, -75, +75, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
     }
-    g_yAxis1Output = constrain(axis_output, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
+    g_y1_value = constrain(axis_output, MIN_OUTPUT_VALUE, MAX_OUTPUT_VALUE);
   }
 
   if (CAN.packetId() == 0x14) // Packet ID 0x14 for buttons
