@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.0">
+<eagle version="9.5.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3294,7 +3294,7 @@ unwanted messages, thereby reducing the host MCUs overhead. The MCP2515 interfac
 <part name="C12" library="SuperHouse-DiscreteSemi" library_urn="urn:adsk.eagle:library:11768461" deviceset="CAP" device="0603" package3d_urn="urn:adsk.eagle:package:7066315/6" value="100nF"/>
 <part name="LED2" library="SuperHouse-LEDs" library_urn="urn:adsk.eagle:library:11790571" deviceset="LED" device="0603" package3d_urn="urn:adsk.eagle:package:7066240/3" value="RED"/>
 <part name="GND12" library="SuperHouse-SupplySymbols" library_urn="urn:adsk.eagle:library:11790503" deviceset="GND" device=""/>
-<part name="1K" library="SuperHouse-DiscreteSemi" library_urn="urn:adsk.eagle:library:11768461" deviceset="RESISTOR" device="0603" package3d_urn="urn:adsk.eagle:package:11768543/2" value="1K"/>
+<part name="R10" library="SuperHouse-DiscreteSemi" library_urn="urn:adsk.eagle:library:11768461" deviceset="RESISTOR" device="0603" package3d_urn="urn:adsk.eagle:package:11768543/2" value="1K"/>
 <part name="C4" library="SuperHouse-DiscreteSemi" library_urn="urn:adsk.eagle:library:11768461" deviceset="CAP" device="0603" package3d_urn="urn:adsk.eagle:package:7066315/6" value="1uF"/>
 <part name="R6" library="SuperHouse-DiscreteSemi" library_urn="urn:adsk.eagle:library:11768461" deviceset="RESISTOR" device="0603" package3d_urn="urn:adsk.eagle:package:11768543/2" value="120R"/>
 <part name="SJ1" library="SuperHouse-Jumpers" library_urn="urn:adsk.eagle:library:12190622" deviceset="SJC" device="-NORMAL" package3d_urn="urn:adsk.eagle:package:7066342/1" value="CAN Termination"/>
@@ -3549,7 +3549,7 @@ because it can operate at 3.3V</text>
 <instance part="GND12" gate="1" x="22.86" y="38.1" smashed="yes">
 <attribute name="VALUE" x="20.32" y="35.56" size="1.778" layer="96"/>
 </instance>
-<instance part="1K" gate="G$1" x="22.86" y="58.42" smashed="yes" rot="R90">
+<instance part="R10" gate="G$1" x="22.86" y="58.42" smashed="yes" rot="R90">
 <attribute name="NAME" x="21.3614" y="54.61" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="26.162" y="54.61" size="1.778" layer="96" rot="R90"/>
 </instance>
@@ -4066,7 +4066,7 @@ because it can operate at 3.3V</text>
 <net name="N$1" class="0">
 <segment>
 <pinref part="LED2" gate="G$1" pin="A"/>
-<pinref part="1K" gate="G$1" pin="1"/>
+<pinref part="R10" gate="G$1" pin="1"/>
 <wire x1="22.86" y1="53.34" x2="22.86" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -4160,7 +4160,7 @@ because it can operate at 3.3V</text>
 <pinref part="ICSP" gate="G$1" pin="3"/>
 </segment>
 <segment>
-<pinref part="1K" gate="G$1" pin="2"/>
+<pinref part="R10" gate="G$1" pin="2"/>
 <wire x1="22.86" y1="63.5" x2="22.86" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="68.58" x2="17.78" y2="68.58" width="0.1524" layer="91"/>
 <label x="17.78" y="68.58" size="1.27" layer="95" rot="R180" xref="yes"/>
