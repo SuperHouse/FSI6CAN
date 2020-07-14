@@ -19,7 +19,7 @@ Features:
 
  * Takes power from transmitter header.
  * CAN bus.
- * ATmega 32u4 MCU (Arduino compatible)
+ * ATmega328 MCU (Arduino compatible)
 
 More information is available at:
 
